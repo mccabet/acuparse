@@ -116,5 +116,4 @@ switch ($config->version->app) {
         $config->version->app = '3.0.1';
         syslog(LOG_INFO, "(SYSTEM)[UPDATE]: DONE 3.0.1");
         $notes .= '<li><strong>' . $config->version->app . '</strong> - ' . 'Bug Fixes. See CHANGELOG!';
-
 }

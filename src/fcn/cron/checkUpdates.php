@@ -84,7 +84,7 @@ $result = mysqli_fetch_assoc(mysqli_query($conn, "SELECT `value` FROM `system` W
 if ($result) {
     syslog(LOG_DEBUG, "(SYSTEM){CRON}[RELEASES]: Checking for updates");
     // Make sure update interval has passed since last update
-    if ((strtotime($result['value']) < strtotime("-" . '1 min'))) {
+    if ((strtotime($result['value']) < strtotime("-" . '23 hours 20 min'))) {
         $telemetry = getTelemetry();
         $telemetry['clientID'] = $config->version->installHash;
         $telemetry['version'] = $config->version->app;

@@ -181,6 +181,12 @@ if (isset($_SESSION['authenticated']) && $_SESSION['admin'] === true) {
         $config->upload->windguru->password = (isset($_POST['upload']['windguru']['password'])) ? $_POST['upload']['windguru']['password'] : null;
         $config->upload->windguru->url = (isset($_POST['upload']['windguru']['url'])) ? $_POST['upload']['windguru']['url'] : 'http://www.windguru.cz/upload/api.php';
 
+        // OpenWeather
+        $config->upload->openweather->enabled = (bool)$_POST['upload']['openweather']['enabled'];
+        $config->upload->openweather->id = (isset($_POST['upload']['openweather']['id'])) ? $_POST['upload']['openweather']['id'] : null;
+        $config->upload->openweather->key = (isset($_POST['upload']['openweather']['key'])) ? $_POST['upload']['openweather']['key'] : null;
+        $config->upload->openweather->url = (isset($_POST['upload']['openweather']['url'])) ? $_POST['upload']['openweather']['url'] : 'http://api.openweathermap.org/data/3.0/measurements';
+
         // Generic
         $config->upload->generic->enabled = (bool)$_POST['upload']['generic']['enabled'];
         $config->upload->generic->id = (isset($_POST['upload']['generic']['id'])) ? $_POST['upload']['generic']['id'] : null;

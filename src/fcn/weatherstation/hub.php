@@ -35,7 +35,7 @@
 
 $device = 'H';
 
-// Process UTC timestamp
+// Generate update timestamp
 $timestamp = date("Y-m-d H:i:s");
 $todaysDate = date('Y-m-d');
 

@@ -34,6 +34,8 @@ require(dirname(dirname(__DIR__)) . '/inc/loader.php');
  * @var object $config Global Config
  */
 
+ini_set('default_socket_timeout', 1);
+
 if (empty($config->station->access_mac) && empty($config->station->hub_mac)) {
     $mac = $_GET['id'];
     exit(syslog(LOG_ERR, "(SYSTEM)[ERROR]: MAC $mac is not configured."));

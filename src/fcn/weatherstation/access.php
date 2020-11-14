@@ -44,7 +44,7 @@ $timestamp = (string)mysqli_real_escape_string($conn,
 $timestamp = str_replace('T', ' ', $timestamp);
 $timestamp = strtotime($timestamp . ' UTC');
 $timestamp = date("Y-m-d H:i:s", $timestamp);
-$todaysDate = date('Y-m-d');
+$date = date('Y-m-d', $timestamp);
 
 // Build update data
 $postData = http_build_query($_POST);
@@ -127,7 +127,7 @@ if ($_GET['mt'] === '5N1') {
             INSERT INTO `winddirection` (`degrees`, `gust`, `timestamp`, `device`, `source`) VALUES ('$windDirection', '$windGustDirection', '$timestamp', '$device', '$source');
             INSERT INTO `humidity` (`relH`, `timestamp`, `device`, `source`) VALUES ('$humidity', '$timestamp', '$device', '$source');
             UPDATE `rainfall` SET `rainin`='$rainIN', `last_update`='$timestamp', `device`='$device', `source`='$source';
-            INSERT INTO `dailyrain` (`dailyrainin`, `date`, `last_update`, `device`, `source`) VALUES ('$dailyRainIN', '$todaysDate', '$timestamp', '$device', '$source') ON DUPLICATE KEY UPDATE `dailyrainin`='$dailyRainIN', `last_update`='$timestamp', `device`='$device', `source`='$source';
+            INSERT INTO `dailyrain` (`dailyrainin`, `date`, `last_update`, `device`, `source`) VALUES ('$dailyRainIN', '$date', '$timestamp', '$device', '$source') ON DUPLICATE KEY UPDATE `dailyrainin`='$dailyRainIN', `last_update`='$timestamp', `device`='$device', `source`='$source';
             INSERT INTO `pressure` (`inhg`, `timestamp`, `device`, `source`) VALUES ('$baromin', '$timestamp', '$device', '$source');
             UPDATE `access_status` SET `battery`='$batteryAccess',`last_update`='$timestamp';
             UPDATE `5n1_status` SET `battery`='$battery', `rssi`='$rssi', `last_update`='$timestamp' WHERE `device`='access';";
@@ -234,7 +234,7 @@ elseif ($_GET['mt'] === 'Atlas') {
             INSERT INTO `winddirection` (`degrees`, `gust`, `timestamp`, `device`, `source`) VALUES ('$windDirection', '$windGustDirection', '$timestamp', '$device', '$source');
             INSERT INTO `humidity` (`relH`, `timestamp`, `device`, `source`) VALUES ('$humidity', '$timestamp', '$device', '$source');
             UPDATE `rainfall` SET `rainin`='$rainIN', `last_update`='$timestamp', `device`='$device', `source`='$source';
-            INSERT INTO `dailyrain` (`dailyrainin`, `date`, `last_update`, `device`, `source`) VALUES ('$dailyRainIN', '$todaysDate', '$timestamp', '$device', '$source') ON DUPLICATE KEY UPDATE `dailyrainin`='$dailyRainIN', `last_update`='$timestamp', `device`='$device', `source`='$source';
+            INSERT INTO `dailyrain` (`dailyrainin`, `date`, `last_update`, `device`, `source`) VALUES ('$dailyRainIN', '$date', '$timestamp', '$device', '$source') ON DUPLICATE KEY UPDATE `dailyrainin`='$dailyRainIN', `last_update`='$timestamp', `device`='$device', `source`='$source';
             INSERT INTO `uvindex` (`uvindex`, `timestamp`) VALUES('$uvindex', '$timestamp');
             INSERT INTO `light` (`lightintensity`, `measured_light_seconds`, `timestamp`) VALUES('$lightintensity', '$measured_light_seconds', '$timestamp');
             INSERT INTO `pressure` (`inhg`, `timestamp`, `device`, `source`) VALUES ('$baromin', '$timestamp', '$device', '$source');
@@ -396,15 +396,22 @@ if ($config->upload->myacurite->access_enabled === true) {
     $myacurite = file_get_contents($config->upload->myacurite->access_url . '/weatherstation/updateweatherstation?&' . $myacuriteQuery,
         false, $context);
 
-    // Log the raw data
-    if ($config->debug->logging === true) {
-        syslog(LOG_DEBUG, "(ACCESS)[MyAcuRite]: Query = $myacuriteQuery | Response = $myacurite");
-    }
+    // Make sure data was sent
+    if (!$myacurite) {
+        goto myacurite_upload_disabled;
+    } else {
 
-    // Output the response to the Access
-    echo $myacurite;
+        // Log the raw data
+        if ($config->debug->logging === true) {
+            syslog(LOG_DEBUG, "(ACCESS)[MyAcuRite]: Query = $myacuriteQuery | Response = $myacurite");
+        }
+
+        // Output the response to the Access
+        echo $myacurite;
+    }
 } // MyAcurite is disabled
 else {
+    myacurite_upload_disabled:
     // Output the expected response to the Access
     $accessTimezoneOffset = date('P');
     $myacurite = '{"timezone":"' . $accessTimezoneOffset . '"}';

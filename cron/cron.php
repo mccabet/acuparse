@@ -140,6 +140,8 @@ if ($installed === true) {
                 require(APP_BASE_PATH . '/fcn/cron/towerData.php');
             }
 
+            ini_set('default_socket_timeout', 1);
+
             // Build PWS Update
             if ($config->upload->pws->enabled === true) {
                 require(APP_BASE_PATH . '/fcn/cron/pwsweather.php');
@@ -168,6 +170,11 @@ if ($installed === true) {
             // Build Windguru Update
             if ($config->upload->windguru->enabled === true) {
                 require(APP_BASE_PATH . '/fcn/cron/windguru.php');
+            }
+
+            // Build OpenWeather Update
+            if ($config->upload->openweather->enabled === true) {
+                require(APP_BASE_PATH . '/fcn/cron/openweather.php');
             }
 
             // Build Generic WU Based Update
